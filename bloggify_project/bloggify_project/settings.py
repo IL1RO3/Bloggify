@@ -76,9 +76,9 @@ WSGI_APPLICATION = 'bloggify_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'OPTION' : {
+        'OPTIONS' : {
             'service': 'my_service',
-            'passfile' : 'my_pgpass'
+            'passfile' : '.my_pgpass'
         }
     }
 }
@@ -108,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'
 
 USE_I18N = True
 
