@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bloggify/styles.css' %}">
+    <title>Blog Posts</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Blog Posts</h1>
+        
+        <div class="posts-grid">
+            {% for post in posts %}
+            <div class="post-card">
+                <h3>{{ post.title }}</h3>
+                <p class="author">Author: {{ post.author }}</p>
+                <p class="date">Published on {{ post.pub_date }}</p>
+                <p class="preview">{{ post.body|truncatechars:120 }}</p>
+                <a href="{% url 'bloggify:post_detail' post.pub_date.year post.pub_date.month post.pub_date.day post.slug %}" class="read-more"> Read More →</a>
+            </div>
+            {% empty %}
+                <p class="no-posts">No posts available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

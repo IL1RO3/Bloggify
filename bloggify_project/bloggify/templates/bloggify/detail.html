@@ -1,0 +1,38 @@
+<!-- bloggify/detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bloggify/styles.css' %}">
+    <title>{{ post.title }}</title>
+</head>
+<body>
+    <div class="article">
+        <h1>{{ post.title }}</h1>
+        <p>Author: {{ post.author }}</p>
+        <p>Published: {{ post.pub_date }}</p>
+        <p>{{ post.body }}</p>
+        <a href="{% url 'bloggify:index' %}">← Back to all posts</a>
+    </div>
+    
+    <div class="comments">
+        <h2 class="comments-head" data-count="{{ post.comments.count }}">
+            Comments
+        </h2>
+        <ul class="comments-container">
+            {% for comment in post.comments.all %}
+            <li>
+                <h2>{{ comment.name }}</h2>
+                <h4>{{ comment.email }}</h4>
+                <h4>{{ comment.created_date }}</h4>
+                <p>{{ comment.body }}</p>
+            </li>
+            {% empty %}
+            <li class="no-comment">No comments yet. Be the first to comment!</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

@@ -13,6 +13,9 @@ class Category(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return self.title
 
 class Post(models.Model):
     STATUS_CHOICES = [
@@ -36,7 +39,6 @@ class Post(models.Model):
             self.slug = slugify(self.title)
         super().save(*args,**kwargs)
 
-
     @property
     def status(self):
         return self._status
@@ -45,9 +47,12 @@ class Post(models.Model):
     def status(self, value):
         self._status = value.lower() if value else value
 
+    def __str__(self):
+        return self.title
+
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post,on_delete=models.CASCADE)
+    post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name='comments')
     name = models.CharField(max_length=250)
     email = models.EmailField()
     body = models.TextField()
