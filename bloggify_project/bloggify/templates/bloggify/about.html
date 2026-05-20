@@ -1,0 +1,55 @@
+<!-- About Page Template -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bloggify/styles.css' %}">
+    <title>About | Bloggify</title>
+</head>
+<body>
+    <div class="container">
+        <h1>About Me</h1>
+        
+        <div class="about-section">
+            <div class="about-card">
+                <h2>👨‍💻 Who Am I?</h2>
+                <p>I'm a backend developer passionate about building efficient, scalable systems. Currently diving deep into Django while keeping one foot in the low-level world.</p>
+            </div>
+
+            <div class="about-card">
+                <h2>🐍 Why Django?</h2>
+                <p>This project (<strong>Bloggify</strong>) is my training ground for learning Django. I'm exploring everything from models and views to middleware and deployment. It's not just a blog — it's my learning journal.</p>
+            </div>
+
+            <div class="about-card">
+                <h2>⚙️ Low Level Love</h2>
+                <p>When I'm not writing Python, I'm messing with C, memory management, pointers, and sometimes a bit of Assembly. Understanding how things work under the hood makes me a better developer at every level.</p>
+            </div>
+
+            <div class="about-card">
+                <h2>🎯 What I'm Working On</h2>
+                <ul>
+                    <li>Mastering Django class-based views</li>
+                    <li>Building clean, maintainable backends</li>
+                    <li>Learning PostgreSQL optimization</li>
+                    <li>Exploring Linux kernel basics</li>
+                </ul>
+            </div>
+
+            <div class="about-card">
+                <h2>📫 Let's Connect</h2>
+                <p>This blog is a work in progress — just like me. Feel free to check out my code, leave feedback, or suggest improvements.</p>
+                <div class="social-links">
+                    <a href="https://github.com/yourusername" target="_blank">GitHub</a>
+                    <a href="https://twitter.com/yourhandle" target="_blank">Twitter</a>
+                    <a href="mailto:your.email@example.com">Email</a>
+                </div>
+            </div>
+        </div>
+        
+        <a href="{% url 'bloggify:index' %}" class="back-link">← Back to Blog</a>
+    </div>
+</body>
+</html>

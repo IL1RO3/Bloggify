@@ -5,15 +5,137 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
     min-height: 100vh;
-    padding: 2rem;
+   
+}
+
+/* ==================== */
+/* NAVBAR STYLES */
+/* ==================== */
+
+.navbar {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    margin-bottom: 2rem;
+    border-radius: 0 0 16px 16px;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    
+}
+
+.nav-brand a {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    background: linear-gradient(135deg, #fff, #a8b2ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transition: all 0.3s ease;
+}
+
+.nav-brand a:hover {
+    opacity: 0.8;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-links a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 0.5rem 0;
+}
+
+.nav-links a:hover {
+    color: #a8b2ff;
+}
+
+.nav-category {
+    display: flex;
+    align-items: center;
+}
+
+.category-select {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.category-select:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(168, 178, 255, 0.5);
+}
+
+.category-select option {
+    background: #1a1a2e;
+    color: #fff;
+}
+
+.category-select:focus {
+    outline: none;
+    border-color: #a8b2ff;
+}
+
+/* Category links style (for Method 3) */
+.category-links {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.category-links a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.category-links a:hover {
+    background: rgba(168, 178, 255, 0.2);
+    color: #a8b2ff;
+}
+
+.category-links a.active {
+    background: rgba(168, 178, 255, 0.3);
+    color: #fff;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
+     padding: 2rem;
 }
 
 h1 {
@@ -28,7 +150,10 @@ h1 {
     letter-spacing: -0.5px;
 }
 
-/* Grid layout - 3 cards per row */
+/* ==================== */
+/* INDEX PAGE - GRID LAYOUT */
+/* ==================== */
+
 .posts-grid {
     display: flex;
     flex-wrap: wrap;
@@ -36,12 +161,12 @@ h1 {
     justify-content: center;
 }
 
-/* Card styling */
 .post-card {
     flex: 0 1 calc(33.333% - 1rem);
     min-width: 250px;
     background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 24px;
     padding: 1.5rem;
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -66,7 +191,6 @@ h1 {
     line-height: 1.3;
 }
 
-/* Faded author style */
 .author {
     color: rgba(168, 178, 255, 0.6);
     font-size: 0.85rem;
@@ -74,7 +198,6 @@ h1 {
     margin-bottom: 0.25rem;
 }
 
-/* Faded date style */
 .date {
     color: rgba(255, 255, 255, 0.4);
     font-size: 0.75rem;
@@ -89,7 +212,6 @@ h1 {
     flex-grow: 1;
 }
 
-/* Faded read more link */
 .read-more {
     display: inline-block;
     color: rgba(168, 178, 255, 0.7);
@@ -117,10 +239,9 @@ h1 {
 }
 
 /* ==================== */
-/* DETAIL PAGE STYLES - NETFLIX/AMAZON STYLE */
+/* DETAIL PAGE STYLES */
 /* ==================== */
 
-/* Article Styles - Full width Netflix style */
 .article {
     max-width: 1200px;
     margin: 0 auto 2rem auto;
@@ -138,7 +259,6 @@ h1 {
     background: none;
     -webkit-background-clip: unset;
     background-clip: unset;
-    color: #fff;
     text-align: left;
     margin-bottom: 1rem;
     letter-spacing: -0.5px;
@@ -151,7 +271,7 @@ h1 {
     font-size: 1rem;
 }
 
-.article p:nth-of-type(1),
+.article p:first-of-type,
 .article p:nth-of-type(2) {
     color: #808080;
     font-size: 0.9rem;
@@ -164,7 +284,7 @@ h1 {
     margin-top: 1.5rem;
 }
 
-.article a {
+.back-link {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -175,17 +295,18 @@ h1 {
     transition: all 0.3s ease;
     background: rgba(255, 255, 255, 0.1);
     padding: 0.5rem 1rem;
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
-.article a:hover {
+.back-link:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: translateX(-5px);
 }
 
+.back-link::before {
+    content: "←";
+}
 
-
-/* Comments Section - Netflix/Amazon Style */
 .comments {
     max-width: 1200px;
     margin: 0 auto;
@@ -248,7 +369,7 @@ h1 {
     margin-bottom: 0.5rem;
 }
 
-.comments-container h4:nth-of-type(1) {
+.comments-container h4:first-of-type {
     color: #808080;
     font-size: 0.7rem;
 }
@@ -260,8 +381,7 @@ h1 {
     margin-top: 0.5rem;
 }
 
-/* No comments message styling */
-.comments-container .no-comment {
+.no-comment {
     color: rgba(255, 255, 255, 0.5);
     text-align: center;
     font-style: italic;
@@ -273,70 +393,252 @@ h1 {
     margin-top: 1rem;
 }
 
-.comments-container .no-comment:hover {
+.no-comment:hover {
     background: rgba(255, 255, 255, 0.02);
     padding-left: 2rem;
     transform: none;
 }
 
-/* Empty comments message fallback */
-.comments-container:empty::before {
-    content: "No comments yet. Be the first to comment!";
-    display: block;
-    color: #666;
-    text-align: center;
-    font-style: italic;
+/* ==================== */
+/* CONTACT PAGE STYLES */
+/* ==================== */
+
+.contact-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 24px;
     padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Responsive for detail page */
-@media (max-width: 768px) {
-    body {
-        padding: 1rem;
-    }
-    
-    .article {
-        padding: 1.5rem;
-    }
-    
-    .article h1 {
-        font-size: 1.75rem;
-    }
-    
-    .comments {
-        padding: 1.25rem;
-    }
-    
-    .comments-container li {
-        padding: 1rem 0;
-    }
-    
-    .comments-container .no-comment {
-        padding: 1rem;
-    }
-    
-    .comments-container .no-comment:hover {
-        padding-left: 1rem;
-    }
+.contact-section h2 {
+    color: #a8b2ff;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    margin-top: 1.5rem;
+    border-left: 3px solid #a8b2ff;
+    padding-left: 1rem;
 }
 
-/* Responsive design for index page */
+.contact-section h2:first-of-type {
+    margin-top: 0;
+}
+
+.contact-section address,
+.contact-section p {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-style: normal;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.social-links a {
+    color: rgba(168, 178, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.social-links a:hover {
+    color: #a8b2ff;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+/* ==================== */
+/* ABOUT PAGE STYLES */
+/* ==================== */
+
+.about-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+.about-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 24px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    flex: 1 1 300px;
+}
+
+.about-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.about-card h2 {
+    color: #a8b2ff;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.about-card p {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.about-card ul {
+    color: rgba(255, 255, 255, 0.8);
+    padding-left: 1.5rem;
+}
+
+.about-card li {
+    margin-bottom: 0.5rem;
+}
+
+.tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.tech-tag {
+    background: rgba(168, 178, 255, 0.1);
+    color: #a8b2ff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    border: 1px solid rgba(168, 178, 255, 0.2);
+}
+
+
+
+/* ==================== */
+/* RESPONSIVE STYLES */
+/* ==================== */
+
 @media (max-width: 900px) {
     .post-card {
         flex: 0 1 calc(50% - 1rem);
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     body {
-        padding: 1rem;
+        padding: 0.75rem;
+    }
+    
+    .navbar {
+        margin-bottom: 1rem;
+    }
+    
+    .nav-container {
+        padding: 0.75rem 1rem;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .nav-links {
+        gap: 1rem;
+    }
+    
+    .nav-brand a {
+        font-size: 1.25rem;
+    }
+    
+    .nav-links a {
+        font-size: 0.9rem;
+    }
+    
+    .category-select {
+        width: 100%;
+        text-align: center;
     }
     
     h1 {
-        font-size: 2rem;
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .posts-grid {
+        gap: 1rem;
     }
     
     .post-card {
         flex: 0 1 100%;
+        padding: 1.25rem;
+    }
+    
+    .article {
+        padding: 1.25rem;
+    }
+    
+    .article h1 {
+        font-size: 1.5rem;
+    }
+    
+    .comments {
+        padding: 1rem;
+    }
+    
+    .comments-head {
+        font-size: 1.25rem;
+    }
+    
+    .footer {
+        margin-top: 2rem;
+        padding: 1rem;
+    }
+    
+    .footer ul {
+        gap: 0.75rem;
+    }
+    
+    .footer a {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 0.5rem;
+    }
+    
+    .nav-container {
+        padding: 0.5rem;
+    }
+    
+    .nav-links {
+        gap: 0.75rem;
+    }
+    
+    .nav-links a {
+        font-size: 0.8rem;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    .post-card {
+        padding: 1rem;
+    }
+    
+    .post-card h3 {
+        font-size: 1.1rem;
     }
 }

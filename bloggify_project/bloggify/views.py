@@ -9,11 +9,25 @@ from . models import *
 class IndexView(generic.ListView):
     context_object_name = 'posts'
     template_name = 'bloggify/index.html'
-    def get_queryset(self):
-        return Post.objects.order_by('-pub_date')
     
-
-class DetailView(generic.DateDetailView):
+    def get_queryset(self):
+        queryset = Post.objects.order_by('-pub_date')
+        
+        # Filter by category if selected
+        category_id = self.request.GET.get('category')
+        if category_id:
+            queryset = queryset.filter(category_id=category_id)
+        
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        context['selected_category'] = self.request.GET.get('category', '')
+        return context
+    
+    
+class PostDetailView(generic.DateDetailView):
     model = Post
     date_field = 'pub_date'      # Tells Django which date field to use
     month_format = '%m'
@@ -21,5 +35,15 @@ class DetailView(generic.DateDetailView):
     slug_url_kwarg = 'slug'   
     template_name = 'bloggify/detail.html'
     context_object_name = 'post'
-    
+
+class CategoryListView(generic.ListView):
+    context_object_name = 'posts'
+    template_name = 'bloggify/category.html'
+        
+
+def contact(request):
+    return render(request , 'bloggify/contact.html')
+
+def about(request):
+    return render(request , 'bloggify/about.html')
 

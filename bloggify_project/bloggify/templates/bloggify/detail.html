@@ -14,7 +14,7 @@
         <p>Author: {{ post.author }}</p>
         <p>Published: {{ post.pub_date }}</p>
         <p>{{ post.body }}</p>
-        <a href="{% url 'bloggify:index' %}">← Back to all posts</a>
+        <a href="{% url 'bloggify:index' %}" class="back-link">Back to all posts</a>
     </div>
     
     <div class="comments">

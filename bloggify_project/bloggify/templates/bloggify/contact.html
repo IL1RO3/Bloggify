@@ -1,0 +1,39 @@
+<!-- bloggify/templates/bloggify/contact.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bloggify/styles.css' %}">
+    <title>Contact | Bloggify</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Contact Us</h1>
+        
+        <div class="contact-section">
+            <h2>Office Address</h2>
+            <address>
+                1 Letterman Drive<br>
+                Suite D4700<br>
+                San Francisco, CA 94129<br>
+                USA
+            </address>
+            
+            <h2>Contact Information</h2>
+            <p>Phone: +1 (415) 723-9709</p>
+            <p>Email: info@linuxfoundation.org</p>
+            
+            <h2>Follow Us</h2>
+            <div class="social-links">
+                <a href="https://twitter.com/linuxfoundation" target="_blank">Twitter</a>
+                <a href="https://github.com/linuxfoundation" target="_blank">GitHub</a>
+                <a href="https://www.linkedin.com/company/linux-foundation" target="_blank">LinkedIn</a>
+            </div>
+        </div>
+        
+        <a href="{% url 'bloggify:index' %}" class="back-link">← Back to Home</a>
+    </div>
+</body>
+</html>
