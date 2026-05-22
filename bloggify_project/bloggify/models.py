@@ -47,6 +47,10 @@ class Post(models.Model):
     def status(self, value):
         self._status = value.lower() if value else value
 
+    @property
+    def active_comments(self):
+        return self.comments.filter(active=True) # type:ignore
+    
     def __str__(self):
         return self.title
 
@@ -58,3 +62,6 @@ class Comment(models.Model):
     body = models.TextField()
     created_date = models.DateTimeField(default=timezone.now)
     active = models.BooleanField(default=True)
+
+    def __str__(self) -> str:
+        return f'comment posted by {self.name} on {self.post.title}'

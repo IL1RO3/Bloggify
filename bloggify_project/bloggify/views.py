@@ -11,7 +11,7 @@ class IndexView(generic.ListView):
     template_name = 'bloggify/index.html'
     
     def get_queryset(self):
-        queryset = Post.objects.order_by('-pub_date')
+        queryset = Post.objects.filter(_status__iexact='published').order_by('-pub_date')
         
         # Filter by category if selected
         category_id = self.request.GET.get('category')
@@ -35,6 +35,12 @@ class PostDetailView(generic.DateDetailView):
     slug_url_kwarg = 'slug'   
     template_name = 'bloggify/detail.html'
     context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['active_comments'] = Post.active_comments
+        return context
+    
 
 class CategoryListView(generic.ListView):
     context_object_name = 'posts'

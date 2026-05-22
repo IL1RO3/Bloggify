@@ -22,7 +22,8 @@
             Comments
         </h2>
         <ul class="comments-container">
-            {% for comment in post.comments.all %}
+            
+            {% for comment in post.active_comments %}
             <li>
                 <h2>{{ comment.name }}</h2>
                 <h4>{{ comment.email }}</h4>
