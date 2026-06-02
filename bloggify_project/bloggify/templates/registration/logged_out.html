@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logged Out - Bloggify</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bloggify/styles.css' %}">
+</head>
+<body>
+
+    <main>
+        <div class="logout-container">
+            <h2>You have been logged out</h2>
+            <p>Thank you for visiting. You are now safely logged out of your account.</p>
+            <p>
+                <a href="{% url 'bloggify:login' %}">Log in again</a> |
+                <a href="{% url 'bloggify:index' %}">Return to homepage</a>
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <!-- Optional: site footer -->
+    </footer>
+</body>
+</html>

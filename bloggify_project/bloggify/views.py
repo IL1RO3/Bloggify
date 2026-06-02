@@ -1,9 +1,11 @@
-from typing import Any
 
 from django.db.models.query import QuerySet
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.views import generic
 from . models import *
+from django.contrib.auth import logout
+from django.contrib.auth.forms import UserCreationForm
+
 # Create your views here.
 
 class IndexView(generic.ListView):
@@ -53,3 +55,19 @@ def contact(request):
 def about(request):
     return render(request , 'bloggify/about.html')
 
+
+def logout_view(request):
+    if request.method == "POST":
+        logout(request)
+        return redirect('bloggify:index')  # or any page you want
+
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('bloggify:login')
+    else:
+        form = UserCreationForm()
+    return render(request , 'registration/signup.html' ,{'form':form})
