@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post an article</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bloggify/styles.css' %}">
+</head>
+<body>
+    <div class="post_article">
+        <form method="post" action="{% url 'bloggify:post_article' %}">
+                {% csrf_token %}
+
+                <!-- Title field -->
+                <div class="form-group">
+                    {{ form.title.label_tag }}
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="error">{{ form.title.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Body field -->
+                <div class="form-group">
+                    {{ form.body.label_tag }}
+                    {{ form.body }}
+                    {% if form.body.errors %}
+                        <div class="error">{{ form.body.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Category field -->
+                <div class="form-group">
+                    {{ form.category.label_tag }}
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                        <div class="error">{{ form.category.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit">Post</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -5,7 +5,8 @@ from django.views import generic
 from . models import *
 from django.contrib.auth import logout
 from django.contrib.auth.forms import UserCreationForm
-
+from .forms import AddPostForm
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 class IndexView(generic.ListView):
@@ -71,3 +72,22 @@ def signup_view(request):
     else:
         form = UserCreationForm()
     return render(request , 'registration/signup.html' ,{'form':form})
+
+
+@login_required(login_url='/login')
+def post_article_view(request):
+    if request.method == 'POST':
+        form = AddPostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            if request.user.username == 'iliro':
+                post.status = 'published'
+                post.pub_date = timezone.now()
+
+            post.save()
+            return redirect('bloggify:index')
+
+    else:
+        form = AddPostForm()
+    return render(request , 'registration/post_article.html',{'form':form})

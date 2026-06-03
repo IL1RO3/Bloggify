@@ -8,56 +8,84 @@
     <title>Blog Posts</title>
 </head>
 <body>
+
     <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-container">
+
             <div class="nav-brand">
                 <a href="{% url 'bloggify:index' %}">Bloggify</a>
             </div>
+
             <div class="nav-links">
                 <a href="{% url 'bloggify:index' %}">Home</a>
                 <a href="{% url 'bloggify:about' %}">About</a>
                 <a href="{% url 'bloggify:contact' %}">Contact</a>
             </div>
+
             <div class="nav-category">
                 <form method="get" action="{% url 'bloggify:index' %}" id="categoryForm">
                     <select name="category" class="category-select" onchange="this.form.submit()">
                         <option value="">All Categories</option>
+
                         {% for category in categories %}
-                        <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
-                            {{ category.title }}
-                        </option>
+                            <option value="{{ category.id }}"
+                                {% if selected_category == category.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ category.title }}
+                            </option>
                         {% endfor %}
+
                     </select>
                 </form>
             </div>
+
             <div class="login-btn-container">
                 {% if user.is_authenticated %}
+
+                    <a href="{% url 'bloggify:post_article' %}" class="post-button">
+                        Post Article
+                    </a>
+
                     <form method="post" action="{% url 'bloggify:logout' %}" style="display:inline;">
                         {% csrf_token %}
                         <button type="submit" class="logout-button">Logout</button>
                     </form>
+
                 {% else %}
+
                     <a href="{% url 'bloggify:login' %}">Login</a>
+
                 {% endif %}
-    </div>
+            </div>
+
         </div>
     </nav>
 
+    <!-- Main Content -->
     <div class="container">
         <h1>Blog Posts</h1>
-        
+
         <div class="posts-grid">
             {% for post in posts %}
-            <div class="post-card">
-                <h3>{{ post.title }}</h3>
-                <p class="author">Author: {{ post.author }}</p>
-                <p class="date">Published on {{ post.pub_date }}</p>
-                <p class="preview">{{ post.body|truncatechars:120 }}</p>
-                <a href="{% url 'bloggify:post_detail' post.pub_date.year post.pub_date.month post.pub_date.day post.slug %}" class="read-more">Read More →</a>
-            </div>
+
+                <div class="post-card">
+                    <h3>{{ post.title }}</h3>
+                    <p class="author">Author: {{ post.author }}</p>
+                    <p class="date">Published on {{ post.pub_date }}</p>
+                    <p class="preview">{{ post.body|truncatechars:120 }}</p>
+
+                    <a href="{% url 'bloggify:post_detail' post.pub_date.year post.pub_date.month post.pub_date.day post.slug %}" class="read-more">
+                        Read More →
+                    </a>
+                </div>
+
             {% empty %}
+
                 <p class="no-posts">No posts available in this category.</p>
+
             {% endfor %}
         </div>
     </div>

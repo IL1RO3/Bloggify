@@ -841,6 +841,110 @@ main {
     background: rgba(255, 255, 255, 0.05);
 }
 
+/* ==================== */
+/* POST ARTICLE FORM */
+/* ==================== */
+
+.post_article {
+    max-width: 600px;
+    margin: 5rem auto;
+    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.post_article h2 {
+    font-size: 2.2rem;
+    color: #a8b2ff;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.post_article .form-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.post_article label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.post_article input[type="text"],
+.post_article textarea,
+.post_article select {
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.post_article input[type="text"]:focus,
+.post_article textarea:focus,
+.post_article select:focus {
+    border-color: #a8b2ff;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.post_article .error {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+.post_article button[type="submit"] {
+    padding: 0.75rem;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #a8b2ff, #fff);
+    color: #000;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.post_article button[type="submit"]:hover {
+    background: linear-gradient(135deg, #fff, #a8b2ff);
+    color: #000;
+    transform: translateY(-2px);
+}
+.post-button {
+    padding: 8px 14px;
+    background-color: #2563eb;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    margin-right: 10px;
+}
+
+.post-button:hover {
+    background-color: #1d4ed8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .post_article {
+        margin: 3rem 1rem;
+        padding: 2rem;
+    }
+}
+
 /* Responsive */
 @media (max-width: 980px) {
     .nav-container {
