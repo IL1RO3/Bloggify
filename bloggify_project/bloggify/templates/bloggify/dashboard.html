@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bloggify/styles.css' %}">
+</head>
+<body>
+    <div class="dashboard-container">
+
+        <!-- Sidebar / User info -->
+        <aside class="dashboard-sidebar">
+            <h2>Hello, {{ user.username }}</h2>
+            {% if user.email %}
+                <p>{{ user.email }}</p>
+            {% else %}
+                <p class="no-email">No email added</p>
+            {% endif %}
+            <p>Last login: {{ user.last_login }}</p>
+            <p>Date joined: {{ user.date_joined }}</p>
+            <form method="get" action="{% url 'bloggify:logout' %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="logout-button">logout</button>
+            </form>
+        </aside>
+
+        <!-- Main content -->
+        <main class="dashboard-main">
+            <h1>Your Posts</h1>
+            {% if dash_posts %}
+                <div class="posts-grid">
+                    {% for post in dash_posts %}
+                    <div class="post-card">
+                        <h3>{{ post.title }}</h3>
+                        <p class="post-meta">By {{ post.author }} | Status: {{ post.status }}</p>
+                        <p class="post-preview">{{ post.body|truncatechars:150 }}</p>
+                        <div class="post-actions">
+                            <a href="{% url 'bloggify:update_article' post.id %}" class="edit_btn">Edit</a>
+                            <a href="{% url 'bloggify:delete_article' post.id %}" class="del-btn">Delete</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}  
+                <p class="no-posts">You have no posts yet.</p>
+            {% endif %}
+        </main>
+
+    </div>
+</body>
+</html>

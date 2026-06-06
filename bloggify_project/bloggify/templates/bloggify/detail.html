@@ -15,6 +15,10 @@
         <p>Published: {{ post.pub_date }}</p>
         <p>{{ post.body }}</p>
         <a href="{% url 'bloggify:index' %}" class="back-link">Back to all posts</a>
+        {% if user.is_staff or post.author == user  %}
+        <a href="{% url 'bloggify:update_article' post.id %}" class="edit_btn">Edit</a>
+        <a href="{% url 'bloggify:delete_article' post.id %}" class="del-btn">Delete</a>
+        {% endif %}
     </div>
     
     <div class="comments">

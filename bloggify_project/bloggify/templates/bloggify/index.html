@@ -45,13 +45,9 @@
             <div class="login-btn-container">
                 {% if user.is_authenticated %}
 
-                    <a href="{% url 'bloggify:post_article' %}" class="post-button">
-                        Post Article
-                    </a>
-
-                    <form method="post" action="{% url 'bloggify:logout' %}" style="display:inline;">
+                    <form method="get" action="{% url 'bloggify:dashboard' %}" style="display:inline;">
                         {% csrf_token %}
-                        <button type="submit" class="logout-button">Logout</button>
+                        <button type="submit" class="logout-button">Dashboard</button>
                     </form>
 
                 {% else %}
