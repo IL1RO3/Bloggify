@@ -3,47 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
+    <title>Bloggify Dashboard</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'bloggify/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
 <body>
     <div class="dashboard-container">
 
-        <!-- Sidebar / User info -->
+        <!-- Sidebar -->
         <aside class="dashboard-sidebar">
-            <h2>Hello, {{ user.username }}</h2>
-            {% if user.email %}
-                <p>{{ user.email }}</p>
-            {% else %}
-                <p class="no-email">No email added</p>
-            {% endif %}
-            <p>Last login: {{ user.last_login }}</p>
-            <p>Date joined: {{ user.date_joined }}</p>
-            <form method="get" action="{% url 'bloggify:logout' %}" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="logout-button">logout</button>
-            </form>
+            <div class="sidebar-top">
+                <div class="avatar-circle" aria-hidden="true">{{ user.username|first|upper }}</div>
+                <h2>{{ user.username }}</h2>
+                {% if user.email %}
+                    <p><span>Email</span>{{ user.email }}</p>
+                {% else %}
+                    <p class="no-email"><span>Email</span>No email added</p>
+                {% endif %}
+                <p><span>Last login</span>{{ user.last_login|date:"M d, Y H:i" }}</p>
+                <p><span>Joined</span>{{ user.date_joined|date:"M d, Y H:i" }}</p>
+            </div>
+            <div class="sidebar-bottom">
+                <form method="post" action="{% url 'bloggify:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-button-dash"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </form>
+            </div>
         </aside>
 
         <!-- Main content -->
         <main class="dashboard-main">
-            <h1>Your Posts</h1>
+            <header class="dashboard-header">
+                <div>
+                    <p class="dashboard-kicker">Article workspace</p>
+                    <h1>Your Posts</h1>
+                </div>
+                <div class="dashboard-actions">
+                    <p class="dashboard-summary">{{ post_count }} posts in your dashboard</p>
+                    <a href="{% url 'bloggify:index' %}" class="dashboard-home-button">
+                        <i class="fas fa-house"></i>
+                        Home
+                    </a>
+                    <a href="{% url 'bloggify:post_article' %}" class="write-post-button">
+                        <i class="fas fa-pen-nib"></i>
+                        Write a new post
+                    </a>
+                </div>
+            </header>
             {% if dash_posts %}
                 <div class="posts-grid">
                     {% for post in dash_posts %}
                     <div class="post-card">
-                        <h3>{{ post.title }}</h3>
-                        <p class="post-meta">By {{ post.author }} | Status: {{ post.status }}</p>
+                        <div class="post-header">
+                            <h3>{{ post.title }}</h3>
+                            <span class="post-status {% if post.status == 'published' %}published{% elif post.status == 'archived' %}archived{% else %}draft{% endif %}">
+                                {{ post.status }}
+                            </span>
+                        </div>
+                        <p class="post-meta"><i class="fas fa-user"></i> {{ post.author }}</p>
                         <p class="post-preview">{{ post.body|truncatechars:150 }}</p>
                         <div class="post-actions">
-                            <a href="{% url 'bloggify:update_article' post.id %}" class="edit_btn">Edit</a>
-                            <a href="{% url 'bloggify:delete_article' post.id %}" class="del-btn">Delete</a>
+                            <a href="{% url 'bloggify:update_article' post.id %}" class="edit_btn"><i class="fas fa-edit"></i> Edit</a>
+                            <a href="{% url 'bloggify:delete_article' post.id %}" class="del-btn"><i class="fas fa-trash-alt"></i> Delete</a>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
-            {% else %}  
+            {% else %}
                 <p class="no-posts">You have no posts yet.</p>
             {% endif %}
         </main>

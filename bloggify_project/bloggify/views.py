@@ -1,5 +1,3 @@
-
-from django.db.models.query import QuerySet
 from django.shortcuts import render,redirect
 from django.urls import reverse_lazy
 from django.views import generic
@@ -8,8 +6,11 @@ from django.contrib.auth import logout
 from django.contrib.auth.forms import UserCreationForm
 from .forms import AddPostForm
 from django.contrib.auth.decorators import login_required
-# Create your views here.
+from django.contrib.auth.mixins import LoginRequiredMixin
 
+# class based views including generics
+
+# mapped to /blogs (main page)
 class IndexView(generic.ListView):
     context_object_name = 'posts'
     template_name = 'bloggify/index.html'
@@ -23,14 +24,14 @@ class IndexView(generic.ListView):
             queryset = queryset.filter(category_id=category_id)
         
         return queryset
-    
+   
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         context['selected_category'] = self.request.GET.get('category', '')
         return context
     
-    
+# post detail view: handles slug using sluggify
 class PostDetailView(generic.DateDetailView):
     model = Post
     date_field = 'pub_date'      
@@ -44,23 +45,20 @@ class PostDetailView(generic.DateDetailView):
         context = super().get_context_data(**kwargs)
         context['active_comments'] = Post.active_comments
         return context
-    
+ 
 
-
-class CategoryListView(generic.ListView):
-    context_object_name = 'posts'
-    template_name = 'bloggify/category.html'
-
-
-class PostUpdateView(generic.edit.UpdateView):
+class PostUpdateView(LoginRequiredMixin,generic.edit.UpdateView):
     model = Post
     fields = ['title','body','category']
     template_name = 'registration/update_article.html'
     success_url = reverse_lazy('bloggify:index')
+    login_url = "/login/"
 
-class PostDeleteView(generic.edit.DeleteView):
+
+class PostDeleteView(LoginRequiredMixin,generic.edit.DeleteView):
     model = Post
     template_name = 'registration/delete_article.html'
+    login_url = "/login/"
     success_url = reverse_lazy('bloggify:index')
 
     def get_context_data(self, **kwargs):
@@ -69,23 +67,25 @@ class PostDeleteView(generic.edit.DeleteView):
         return context
 
 
-class Dashboard(generic.ListView):
-    model = Post
+class Dashboard(LoginRequiredMixin ,generic.ListView):
     template_name = 'bloggify/dashboard.html'
-    context_object_name = 'dash_posts'
+    login_url = 'bloggify:login'
+    model = Post
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["dash_posts"] = Post.objects.filter(author=self.request.user)
+        context["post_count"] = context["dash_posts"].count()
+        return context
+    
         
+# function based views
 
 def contact(request):
     return render(request , 'bloggify/contact.html')
 
+
 def about(request):
     return render(request , 'bloggify/about.html')
-
-
-def logout_view(request):
-    if request.method == "POST":
-        logout(request)
-        return redirect('bloggify:index')  
 
 
 def signup_view(request):
@@ -99,7 +99,14 @@ def signup_view(request):
     return render(request , 'registration/signup.html' ,{'form':form})
 
 
-@login_required(login_url='/login')
+@login_required
+def logout_view(request):
+    if request.method == "POST":
+        logout(request)
+    return redirect('bloggify:index')  
+
+
+@login_required
 def post_article_view(request):
     if request.method == 'POST':
         form = AddPostForm(request.POST)

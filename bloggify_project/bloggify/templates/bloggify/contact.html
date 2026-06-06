@@ -9,8 +9,44 @@
     <title>Contact | Bloggify</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Contact Us</h1>
+    <nav class="navbar navbar-collapsible">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="{% url 'bloggify:index' %}">Bloggify</a>
+            </div>
+
+            <input type="checkbox" id="navMenuToggle" class="nav-menu-toggle">
+            <label for="navMenuToggle" class="nav-menu-button" aria-label="Open navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <div class="nav-menu-panel">
+                <div class="nav-links">
+                    <a href="{% url 'bloggify:index' %}">Home</a>
+                    <a href="{% url 'bloggify:about' %}">About</a>
+                    <a href="{% url 'bloggify:contact' %}">Contact</a>
+                </div>
+                <div class="login-btn-container">
+                    {% if user.is_authenticated %}
+                        <form method="get" action="{% url 'bloggify:dashboard' %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="dashboard-button">Dashboard</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'bloggify:login' %}">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="page-header">
+            <p class="page-kicker">Get in touch</p>
+            <h1>Contact Us</h1>
+        </header>
         
         <div class="contact-section">
             <h2>Office Address</h2>
@@ -27,13 +63,13 @@
             
             <h2>Follow Us</h2>
             <div class="social-links">
-                <a href="https://twitter.com/linuxfoundation" target="_blank">Twitter</a>
-                <a href="https://github.com/linuxfoundation" target="_blank">GitHub</a>
+                <a href="https://twitter.com/IRoozban" target="_blank">Twitter</a>
+                <a href="https://github.com/IL1RO3" target="_blank">GitHub</a>
                 <a href="https://www.linkedin.com/company/linux-foundation" target="_blank">LinkedIn</a>
             </div>
         </div>
         
         <a href="{% url 'bloggify:index' %}" class="back-link">← Back to Home</a>
-    </div>
+    </main>
 </body>
 </html>

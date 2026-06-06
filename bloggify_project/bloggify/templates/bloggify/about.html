@@ -9,8 +9,44 @@
     <title>About | Bloggify</title>
 </head>
 <body>
-    <div class="container">
-        <h1>About Me</h1>
+    <nav class="navbar navbar-collapsible">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="{% url 'bloggify:index' %}">Bloggify</a>
+            </div>
+
+            <input type="checkbox" id="navMenuToggle" class="nav-menu-toggle">
+            <label for="navMenuToggle" class="nav-menu-button" aria-label="Open navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <div class="nav-menu-panel">
+                <div class="nav-links">
+                    <a href="{% url 'bloggify:index' %}">Home</a>
+                    <a href="{% url 'bloggify:about' %}">About</a>
+                    <a href="{% url 'bloggify:contact' %}">Contact</a>
+                </div>
+                <div class="login-btn-container">
+                    {% if user.is_authenticated %}
+                        <form method="get" action="{% url 'bloggify:dashboard' %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="dashboard-button">Dashboard</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'bloggify:login' %}">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="page-header">
+            <p class="page-kicker">About Bloggify</p>
+            <h1>About Me</h1>
+        </header>
         
         <div class="about-section">
             <div class="about-card">
@@ -50,6 +86,6 @@
         </div>
         
         <a href="{% url 'bloggify:index' %}" class="back-link">← Back to Blog</a>
-    </div>
+    </main>
 </body>
 </html>

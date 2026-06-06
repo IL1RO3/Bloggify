@@ -27,7 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-LOGIN_REDIRECT_URL = '/blogs/'
+LOGIN_REDIRECT_URL = "/blogs/"
+LOGIN_URL = "/blogs/login/"
 
 # Application definition
 

@@ -9,35 +9,64 @@
     <title>{{ post.title }}</title>
 </head>
 <body>
-    <div class="article">
-        <h1>{{ post.title }}</h1>
-        <p>Author: {{ post.author }}</p>
-        <p>Published: {{ post.pub_date }}</p>
-        <p>{{ post.body }}</p>
-        <a href="{% url 'bloggify:index' %}" class="back-link">Back to all posts</a>
-        {% if user.is_staff or post.author == user  %}
-        <a href="{% url 'bloggify:update_article' post.id %}" class="edit_btn">Edit</a>
-        <a href="{% url 'bloggify:delete_article' post.id %}" class="del-btn">Delete</a>
-        {% endif %}
-    </div>
-    
-    <div class="comments">
-        <h2 class="comments-head" data-count="{{ post.comments.count }}">
-            Comments
-        </h2>
-        <ul class="comments-container">
-            
-            {% for comment in post.active_comments %}
-            <li>
-                <h2>{{ comment.name }}</h2>
-                <h4>{{ comment.email }}</h4>
-                <h4>{{ comment.created_date }}</h4>
-                <p>{{ comment.body }}</p>
-            </li>
-            {% empty %}
-            <li class="no-comment">No comments yet. Be the first to comment!</li>
-            {% endfor %}
-        </ul>
-    </div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="{% url 'bloggify:index' %}">Bloggify</a>
+            </div>
+            <div class="nav-links">
+                <a href="{% url 'bloggify:index' %}">Home</a>
+                <a href="{% url 'bloggify:about' %}">About</a>
+                <a href="{% url 'bloggify:contact' %}">Contact</a>
+            </div>
+            <div class="login-btn-container">
+                {% if user.is_authenticated %}
+                    <form method="get" action="{% url 'bloggify:dashboard' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="dashboard-button">Dashboard</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'bloggify:login' %}">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <article class="article">
+            <h1>{{ post.title }}</h1>
+            <div class="article-meta">
+                <p>Author: {{ post.author }}</p>
+                <p>Published: {{ post.pub_date }}</p>
+            </div>
+            <p class="article-body">{{ post.body }}</p>
+            <div class="article-actions">
+                <a href="{% url 'bloggify:index' %}" class="back-link">Back to all posts</a>
+                {% if user.is_staff or post.author == user  %}
+                    <a href="{% url 'bloggify:update_article' post.id %}" class="edit_btn">Edit</a>
+                    <a href="{% url 'bloggify:delete_article' post.id %}" class="del-btn">Delete</a>
+                {% endif %}
+            </div>
+        </article>
+
+        <section class="comments">
+            <h2 class="comments-head" data-count="{{ post.comments.count }}">
+                Comments
+            </h2>
+            <ul class="comments-container">
+
+                {% for comment in post.active_comments %}
+                <li>
+                    <h2>{{ comment.name }}</h2>
+                    <h4>{{ comment.email }}</h4>
+                    <h4>{{ comment.created_date }}</h4>
+                    <p>{{ comment.body }}</p>
+                </li>
+                {% empty %}
+                <li class="no-comment">No comments yet. Be the first to comment!</li>
+                {% endfor %}
+            </ul>
+        </section>
+    </main>
 </body>
 </html>

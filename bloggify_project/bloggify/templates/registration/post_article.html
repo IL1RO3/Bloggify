@@ -9,6 +9,10 @@
 </head>
 <body>
     <div class="post_article">
+        <h1>Write a new article</h1>
+        <p class="article-draft-notice">
+            After you post, this article will be saved as a draft until an admin approves it.
+        </p>
         <form method="post" action="{% url 'bloggify:post_article' %}">
                 {% csrf_token %}
 
