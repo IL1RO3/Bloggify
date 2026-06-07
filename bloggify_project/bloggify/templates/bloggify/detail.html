@@ -50,11 +50,10 @@
         </article>
 
         <section class="comments">
-            <h2 class="comments-head" data-count="{{ post.comments.count }}">
+            <h2 class="comments-head" data-count="{{ post.active_comments.count }}">
                 Comments
             </h2>
             <ul class="comments-container">
-
                 {% for comment in post.active_comments %}
                 <li>
                     <h2>{{ comment.name }}</h2>
@@ -66,6 +65,7 @@
                 <li class="no-comment">No comments yet. Be the first to comment!</li>
                 {% endfor %}
             </ul>
+            {% include 'bloggify/add_comment.html' %}
         </section>
     </main>
 </body>

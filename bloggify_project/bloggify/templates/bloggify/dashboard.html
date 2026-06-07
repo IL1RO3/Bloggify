@@ -55,6 +55,7 @@
                 <div class="posts-grid">
                     {% for post in dash_posts %}
                     <div class="post-card">
+                        <a class="link-card" href="{% url 'bloggify:post_detail' post.pub_date.year post.pub_date.month post.pub_date.day post.slug %}" aria-label="View {{ post.title }}"></a>
                         <div class="post-header">
                             <h3>{{ post.title }}</h3>
                             <span class="post-status {% if post.status == 'published' %}published{% elif post.status == 'archived' %}archived{% else %}draft{% endif %}">

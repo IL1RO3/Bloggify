@@ -61,7 +61,7 @@ class Comment(models.Model):
     email = models.EmailField()
     body = models.TextField()
     created_date = models.DateTimeField(default=timezone.now)
-    active = models.BooleanField(default=True)
+    active = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f'comment posted by {self.name} on {self.post.title}'

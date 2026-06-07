@@ -1,0 +1,13 @@
+<div class="comment-form-container">
+    <div class="comment-form-intro">
+        <h3>Leave a comment</h3>
+        <p class="comment-moderation-note">
+            After an admin approves your comment, it will be added here.
+        </p>
+    </div>
+    <form class="comment-form" method="post">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit">Add comment</button>
+    </form>
+</div>

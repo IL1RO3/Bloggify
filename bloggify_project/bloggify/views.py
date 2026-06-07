@@ -1,10 +1,10 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect 
 from django.urls import reverse_lazy
 from django.views import generic
 from . models import *
 from django.contrib.auth import logout
 from django.contrib.auth.forms import UserCreationForm
-from .forms import AddPostForm
+from .forms import AddPostForm , CommentForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -44,20 +44,36 @@ class PostDetailView(generic.DateDetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['active_comments'] = Post.active_comments
+        context["comment_form"] = CommentForm()
         return context
+    
+    def post(self,request,*args,**kwargs):
+        post = self.get_object()
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.save()
+            return redirect(request.path)
+
+        context = self.get_context_data(object=post)
+        context['comment_form'] = post
+        return self.render_to_response(context)
+
  
 
 class PostUpdateView(LoginRequiredMixin,generic.edit.UpdateView):
     model = Post
     fields = ['title','body','category']
-    template_name = 'registration/update_article.html'
+    template_name = 'bloggify/update_article.html'
     success_url = reverse_lazy('bloggify:index')
     login_url = "/login/"
 
 
 class PostDeleteView(LoginRequiredMixin,generic.edit.DeleteView):
     model = Post
-    template_name = 'registration/delete_article.html'
+    template_name = 'bloggify/delete_article.html'
     login_url = "/login/"
     success_url = reverse_lazy('bloggify:index')
 
@@ -67,7 +83,7 @@ class PostDeleteView(LoginRequiredMixin,generic.edit.DeleteView):
         return context
 
 
-class Dashboard(LoginRequiredMixin ,generic.ListView):
+class DashboardView(LoginRequiredMixin ,generic.ListView):
     template_name = 'bloggify/dashboard.html'
     login_url = 'bloggify:login'
     model = Post
@@ -77,14 +93,22 @@ class Dashboard(LoginRequiredMixin ,generic.ListView):
         context["post_count"] = context["dash_posts"].count()
         return context
     
+# class CommentAddView(LoginRequiredMixin,generic.edit.CreateView):
+#     model = Comment
+#     form_class = CommentForm
+#     template_name = 'bloggify/add_comment.html'
+
+
+
+    
         
 # function based views
 
-def contact(request):
+def contact_view(request):
     return render(request , 'bloggify/contact.html')
 
 
-def about(request):
+def about_view(request):
     return render(request , 'bloggify/about.html')
 
 
@@ -122,4 +146,4 @@ def post_article_view(request):
 
     else:
         form = AddPostForm()
-    return render(request , 'registration/post_article.html',{'form':form})
+    return render(request , 'bloggify/post_article.html',{'form':form})

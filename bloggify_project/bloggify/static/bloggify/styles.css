@@ -566,7 +566,7 @@ p {
 
 .comments {
     max-width: var(--content);
-    margin-bottom: 54px;
+    margin-bottom: 72px;
     padding: 30px;
     border: 1px solid var(--line);
     border-radius: var(--radius);
@@ -639,6 +639,119 @@ p {
     color: var(--muted);
     text-align: center;
     border-style: dashed;
+}
+
+.comment-form-container {
+    margin-top: 22px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(248, 250, 252, 0.72);
+}
+
+.comment-form-intro {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.comment-form-intro h3 {
+    font-size: 1.08rem;
+    font-weight: 800;
+}
+
+.comment-moderation-note {
+    padding: 11px 13px;
+    border: 1px solid rgba(161, 98, 7, 0.24);
+    border-radius: var(--radius);
+    color: #854d0e;
+    background: #fef9c3;
+    font-size: 0.88rem;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.comment-form {
+    display: grid;
+    gap: 13px;
+}
+
+.comment-form p {
+    display: grid;
+    gap: 5px;
+}
+
+.comment-form label {
+    color: var(--ink);
+    font-size: 0.84rem;
+    font-weight: 800;
+}
+
+.comment-form input[type="text"],
+.comment-form input[type="email"],
+.comment-form textarea {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--ink);
+    background: var(--paper);
+    outline: none;
+}
+
+.comment-form textarea {
+    min-height: 118px;
+    resize: vertical;
+}
+
+.comment-form input[type="text"]:hover,
+.comment-form input[type="email"]:hover,
+.comment-form textarea:hover {
+    border-color: var(--line-strong);
+}
+
+.comment-form input[type="text"]:focus,
+.comment-form input[type="email"]:focus,
+.comment-form textarea:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.1);
+}
+
+.comment-form .errorlist {
+    padding: 10px 12px;
+    border: 1px solid rgba(190, 18, 60, 0.24);
+    border-radius: var(--radius);
+    color: var(--rose);
+    background: var(--rose-soft);
+    font-size: 0.9rem;
+    list-style-position: inside;
+}
+
+.comment-form button[type="submit"] {
+    display: inline-flex;
+    width: fit-content;
+    min-width: 132px;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 4px;
+    padding: 0 16px;
+    border: 1px solid var(--ink);
+    border-radius: var(--radius);
+    color: var(--paper);
+    background: var(--ink);
+    box-shadow: var(--shadow-sm);
+    font-weight: 800;
+    cursor: pointer;
+    justify-self: end;
+}
+
+.comment-form button[type="submit"]:hover {
+    transform: translateY(-1px);
+    border-color: var(--teal);
+    background: var(--teal);
+    box-shadow: var(--shadow);
 }
 
 /* Content pages */
@@ -1304,7 +1417,23 @@ main {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
 }
 
+.dashboard-main .link-card {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.dashboard-main .link-card:focus-visible {
+    outline: 3px solid rgba(15, 118, 110, 0.3);
+    outline-offset: -4px;
+}
+
 .dashboard-main .post-card {
+    width: 100%;
     min-height: 245px;
     padding: 22px;
 }
@@ -1383,6 +1512,11 @@ main {
     gap: 10px;
     padding-top: 16px;
     border-top: 1px solid var(--line);
+}
+
+.dashboard-main .post-actions {
+    position: relative;
+    z-index: 2;
 }
 
 .post-actions .edit_btn,
@@ -1578,6 +1712,33 @@ main {
 
     .comments {
         padding: 20px;
+    }
+
+    .comment-form-container {
+        padding: 16px;
+    }
+
+    .comment-form-intro {
+        display: grid;
+        gap: 4px;
+    }
+
+    .comment-form-intro p {
+        max-width: none;
+        text-align: left;
+    }
+
+    .comment-form {
+        grid-template-columns: 1fr;
+    }
+
+    .comment-form p,
+    .comment-form button[type="submit"] {
+        grid-column: auto;
+    }
+
+    .comment-form button[type="submit"] {
+        width: 100%;
     }
 
     .contact-section {
