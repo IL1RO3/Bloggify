@@ -275,6 +275,10 @@ python manage.py test
 
 Then open a pull request with a short explanation of the change.
 
+## Acknowledgements
+
+The CSS styles in `bloggify/static/bloggify/styles.css` were entirely written by Codex 5.5 Extra High.
+
 ## License
 
-No license has been added yet. Add a license before distributing or accepting external contributions.
+This project is licensed under the BSD 3-Clause License. See `LICENSE` for details.
