@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -19,13 +20,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&82#r1o05a8%-r7wu8=3v*o2z8-^f^z2h^win5%2&_5spzswbk'
+# SECURITY WARNING: set DJANGO_SECRET_KEY in production.
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'local-development-secret-key-change-me-not-for-production',
+)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# SECURITY WARNING: set DJANGO_DEBUG=False in production.
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in {'1', 'true', 'yes', 'on'}
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
+    if host.strip()
+]
 
 LOGIN_REDIRECT_URL = "/blogs/"
 LOGIN_URL = "/blogs/login/"
@@ -79,8 +87,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'OPTIONS' : {
-            'service': 'my_service',
-            'passfile' : '.my_pgpass'
+            'service': os.environ.get('POSTGRES_SERVICE', 'my_service'),
+            'passfile' : os.environ.get('POSTGRES_PASSFILE', str(BASE_DIR / '.my_pgpass')),
         }
     }
 }
