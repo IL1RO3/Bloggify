@@ -7,15 +7,6 @@ from django.contrib.auth.models import User
 
 class Category(models.Model):
     title = models.CharField(unique=True,max_length=250)
-    slug = models.SlugField(unique=True,blank=True)
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
-        super().save(*args, **kwargs)
-    
-    def __str__(self):
-        return self.title
 
 class Post(models.Model):
     STATUS_CHOICES = [
@@ -37,6 +28,8 @@ class Post(models.Model):
     def save(self ,*args , **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
+        if self.author and self.author.is_staff:
+            self._status = 'published'
         super().save(*args,**kwargs)
 
     @property

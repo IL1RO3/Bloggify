@@ -3,7 +3,6 @@ from .models import Category,Comment,Post
 
 # customize admin panel
 class CategoryAdmin(admin.ModelAdmin):
-    fields = ['title']
     list_display = ['title']
 
 class PostAdmin(admin.ModelAdmin):
