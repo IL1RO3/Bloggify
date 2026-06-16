@@ -17,7 +17,9 @@ urlpatterns = [
     path("login/", auth_views.LoginView.as_view(), name="login"),
     path("signup/", views.signup_view, name="signup"),
     path("post/<int:pk>/edit/", views.PostUpdateView.as_view(), name="update_article"),
-    path("post/<int:pk>/delete/", views.PostDeleteView.as_view(), name="delete_article"),
+    path(
+        "post/<int:pk>/delete/", views.PostDeleteView.as_view(), name="delete_article"
+    ),
     path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
     path("dashboard/post_article/", views.post_article_view, name="post_article"),
     path("dashboard/logout/", views.logout_view, name="logout"),
