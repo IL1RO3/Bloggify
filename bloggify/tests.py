@@ -178,7 +178,8 @@ class DetailViewTest(TestCase):
 
 
 class UpdateViewTest(TestCase):
-    def test_article_update_authorized(self):
+
+    def test_article_update_unauthenticated(self):
         post = create_post(
             title="Test",
             body="loremipsumefehtegvfdbgfbvdsvvdfvfdvdfvf",
@@ -208,7 +209,7 @@ class UpdateViewTest(TestCase):
         self.assertEqual(post.category, new_category)
         self.assertEqual(response.status_code, 302)
 
-    def test_article_update_non_authorized(self):
+    def test_update_post_authenticated(self):
         post = create_post(
             title="Test",
             body="loremipsumefehtegvfdbgfbvdsvvdfvfdvdfvf",
@@ -219,7 +220,7 @@ class UpdateViewTest(TestCase):
 
         updated_data = {
             "title": "Test2fggbdbgbdfbgbg",
-            "body": "loremipsumefehtegvfdbgfbvdsvvdfvfdvdfvf",
+            "body": "lore   mipsumefehtegvfdbgfbvdsvvdfvfdvdfvf",
             "category": post.category.id,
         }
 
@@ -233,3 +234,60 @@ class UpdateViewTest(TestCase):
         self.assertEqual(post.title, "Test")
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login/", response.url)
+
+
+class DeleteViewTest(TestCase):
+    def test_delete_post_authenticated(self):
+        post = create_post(
+            title="Test",
+            body="loremipsumefehtegvfdbgfbvdsvvdfvfdvdfvf",
+            username="test",
+            password="nagijwdhfjhvfjsdhkjsd@431A",
+            category="test_category",
+        )
+
+        self.client.force_login(post.author)
+
+        response = self.client.post(reverse("bloggify:delete_article", args=[post.id]))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Post.objects.filter(id=post.id).exists())
+
+    def test_delete_post_unauthenticated(self):
+        post = create_post(
+            title="Test",
+            body="loremipsumefehtegvfdbgfbvdsvvdfvfdvdfvf",
+            username="test",
+            password="nagijwdhfjhvfjsdhkjsd@431A",
+            category="test_category",
+        )
+
+        response = self.client.post(reverse("bloggify:delete_article", args=[post.id]))
+        post.refresh_from_db()
+
+        self.assertEqual(post.title, "Test")
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Post.objects.filter(id=post.id).exists())
+
+    def test_delete_post_non_author(self):
+        post = create_post(
+            title="Test",
+            body="loremipsumefehtegvfdbgfbvdsvvdfvfdvdfvf",
+            username="test",
+            password="nagijwdhfjhvfjsdhkjsd@431A",
+            category="test_category",
+        )
+
+        other_post = create_post(
+            title="Test fwdfsdv",
+            body="loremipsumefehtegvfdbgfbvdsvvdfvfdvdfcdcdscsvfvvf",
+            username="tefdffsfvt",
+            password="nafdvfgijvdwdhfjhvfjsdhkjsd@431A",
+            category="tesfvdvt_category",
+        )
+        self.client.force_login(other_post.author)
+        response = self.client.post(reverse("bloggify:delete_article", args=[post.id]))
+
+        self.assertEqual(post.title, "Test")
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Post.objects.filter(id=post.id).exists())

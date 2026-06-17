@@ -6,7 +6,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.forms import UserCreationForm
 from .forms import AddPostForm, CommentForm
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin , UserPassesTestMixin
 
 
 # class based views including generics
@@ -75,8 +75,7 @@ class PostUpdateView(LoginRequiredMixin, generic.edit.UpdateView):
     login_url = "/login/"
 
 
-
-class PostDeleteView(LoginRequiredMixin, generic.edit.DeleteView):
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin ,generic.edit.DeleteView):
     model = Post
     template_name = "bloggify/delete_article.html"
     login_url = "/login/"
@@ -87,8 +86,13 @@ class PostDeleteView(LoginRequiredMixin, generic.edit.DeleteView):
         context["post_title"] = self.object.title  # type: ignore
         return context
 
+    def test_func(self):
+        post = self.get_object()
+        user  = self.request.user
+        return user == post.author or user.is_staff
 
-class DashboardView(LoginRequiredMixin, generic.ListView):
+
+class DashboardView(LoginRequiredMixin,generic.ListView):
     template_name = "bloggify/dashboard.html"
     login_url = "bloggify:login"
     model = Post
