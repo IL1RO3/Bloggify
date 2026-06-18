@@ -178,6 +178,18 @@ The project works locally with the default development settings, but these envir
 | `POSTGRES_SERVICE` | PostgreSQL service name | `my_service` |
 | `POSTGRES_PASSFILE` | PostgreSQL password file path | `.my_pgpass` |
 
+## Email And Password Reset
+
+Bloggify currently uses Django's console email backend for local development:
+
+```python
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+```
+
+This means password reset emails are printed in the terminal where `python manage.py runserver` is running. For local testing, submit the password reset form, copy the full reset link from the terminal output, and open it in your browser.
+
+Before using password reset with real users, change the email settings in `bloggify_project/settings.py` to a real email backend, such as SMTP or your production email provider. Do not use the console backend in production because it does not send real emails.
+
 Generate a production secret key:
 
 ```bash
@@ -248,6 +260,7 @@ Before using Bloggify in production:
 - Set `DJANGO_DEBUG=False`
 - Add your domain to `DJANGO_ALLOWED_HOSTS`
 - Configure HTTPS
+- Configure a real email backend for password reset emails
 - Serve static files through your web server or storage provider
 - Use a production WSGI or ASGI server such as Gunicorn, uWSGI, Daphne, or Uvicorn
 - Keep `.my_pgpass`, `.env`, and other secret files out of Git
