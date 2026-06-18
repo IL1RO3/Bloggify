@@ -1,3 +1,6 @@
+# pyright: reportAttributeAccessIssue=false
+# above comment is a seeting used by Pylance, remove if you are not using it.
+
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
@@ -6,8 +9,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.forms import UserCreationForm
 from .forms import AddPostForm, CommentForm
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin , UserPassesTestMixin
-
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 # class based views including generics
 
@@ -67,18 +69,23 @@ class PostDetailView(generic.DateDetailView):
         return self.render_to_response(context)
 
 
-class PostUpdateView(LoginRequiredMixin, generic.edit.UpdateView):
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.edit.UpdateView):
     model = Post
     fields = ["title", "body", "category"]
     template_name = "bloggify/update_article.html"
     success_url = reverse_lazy("bloggify:index")
-    login_url = "/login/"
+    login_url = "bloggify:login"
+
+    def test_func(self):
+        post = self.get_object()
+        user = self.request.user
+        return user == post.author or user.is_staff
 
 
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin ,generic.edit.DeleteView):
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.edit.DeleteView):
     model = Post
     template_name = "bloggify/delete_article.html"
-    login_url = "/login/"
+    login_url = "bloggify:login"
     success_url = reverse_lazy("bloggify:index")
 
     def get_context_data(self, **kwargs):
@@ -88,11 +95,11 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin ,generic.edit.Delet
 
     def test_func(self):
         post = self.get_object()
-        user  = self.request.user
+        user = self.request.user
         return user == post.author or user.is_staff
 
 
-class DashboardView(LoginRequiredMixin,generic.ListView):
+class DashboardView(LoginRequiredMixin, generic.ListView):
     template_name = "bloggify/dashboard.html"
     login_url = "bloggify:login"
     model = Post
