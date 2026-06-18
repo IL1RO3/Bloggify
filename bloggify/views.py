@@ -157,3 +157,5 @@ def post_article_view(request):
     else:
         form = AddPostForm()
     return render(request, "bloggify/post_article.html", {"form": form})
+
+

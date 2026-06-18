@@ -1088,6 +1088,48 @@ main {
     text-align: center;
 }
 
+.password-flow {
+    --panel-width: 460px;
+}
+
+.password-flow-copy {
+    margin: -4px 0 18px;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.55;
+    text-align: center;
+}
+
+.password-helper {
+    font-size: 0.92rem;
+}
+
+.password-status {
+    margin: 18px 0 16px;
+    padding: 13px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--ink-soft);
+    background: var(--paper-soft);
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.password-status-success {
+    border-color: rgba(15, 118, 110, 0.22);
+    color: var(--teal-dark);
+    background: rgba(15, 118, 110, 0.08);
+}
+
+.password-status-warning {
+    border-color: rgba(202, 138, 4, 0.28);
+    color: #854d0e;
+    background: rgba(250, 204, 21, 0.16);
+}
+
 .error,
 .login-error,
 .login-container .errorlist,
