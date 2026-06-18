@@ -266,15 +266,6 @@ Before using Bloggify in production:
 - Keep `.my_pgpass`, `.env`, and other secret files out of Git
 - Configure database backups
 
-## Roadmap
-
-- Public deployment
-- Password reset flow
-- More tests for models and views
-- Production deployment documentation
-- Better ownership checks for editing and deleting posts
-- Rich text or Markdown editing for notes and posts
-
 ## Contributing
 
 Contributions are welcome. For larger changes, open an issue first so the implementation can be discussed.
