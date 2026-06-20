@@ -36,7 +36,7 @@ ALLOWED_HOSTS = [
 ]
 
 LOGIN_REDIRECT_URL = "/blogs/"
-LOGIN_URL = "/blogs/login/"
+LOGIN_URL = "bloggify:login"
 
 # Application definition
 

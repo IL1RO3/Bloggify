@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
+from .forms import ModifiedPasswordResetFrom
 
 app_name = "bloggify"
 
@@ -24,6 +25,7 @@ urlpatterns = [
         auth_views.PasswordResetView.as_view(
             template_name="registration/password_reset.html",
             success_url=reverse_lazy("bloggify:password_reset_done"),
+            form_class=ModifiedPasswordResetFrom,
             email_template_name="registration/password_reset_email.html",
         ),
         name="password_reset",

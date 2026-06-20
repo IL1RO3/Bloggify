@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from .helpers import create_post
+from django.core import mail
+from urllib.parse import urlsplit
 
 # tests for models
 
@@ -449,5 +451,72 @@ class LogoutViewTest(TestCase):
         response = self.client.post(reverse("bloggify:logout"))
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(
-            response, f'{reverse("bloggify:login")}?next={reverse("bloggify:logout")}'
+            response,
+            f'{reverse("bloggify:login")}?next={reverse("bloggify:logout")}',
         )
+
+
+class PasswordResetFlowTest(TestCase):
+    def setUp(self):
+        User = get_user_model()
+        self.user = User.objects.create_user(
+            username="Password_reset_user",
+            password="PRUser@123456",
+            email="PasswordResetView@gmail.com",
+        )
+
+    def test_password_reset_valid_email_redirects(self):
+        response = self.client.post(
+            reverse("bloggify:password_reset"),
+            {"email": self.user.email},
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("bloggify:password_reset_done"),
+        )
+
+    def test_password_reset_sends_email(self):
+        self.client.post(
+            reverse("bloggify:password_reset"),
+            {"email": self.user.email},
+        )
+
+        self.assertEqual(len(mail.outbox), 1)
+
+        email = mail.outbox[0]
+        self.assertEqual(email.to, [self.user.email])
+        self.assertIn(self.user.username, email.body)
+        self.assertIn("/password_reset/confirm/", email.body)
+
+    def test_password_reset_complete(self):
+        self.client.post(
+            reverse("bloggify:password_reset"),
+            {"email": self.user.email},
+        )
+
+        reset_url = next(
+            line.strip()
+            for line in mail.outbox[0].body.splitlines()
+            if line.strip().startswith(("http://", "https://"))
+        )
+
+        response = self.client.get(urlsplit(reset_url).path)
+        self.assertEqual(response.status_code, 302)
+
+        new_password = "NewPassword@123456"
+        response = self.client.post(
+            response.url,
+            {
+                "new_password1": new_password,
+                "new_password2": new_password,
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("bloggify:password_reset_complete"),
+        )
+
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password(new_password))
