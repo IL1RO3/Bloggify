@@ -59,3 +59,9 @@ pg_service.conf
 
 # Local planning notes
 todo.md
+
+# Exceptions
+# Keep the public deployment environment template tracked
+!deploy/
+!deploy/env/
+!deploy/env/bloggify.env.example

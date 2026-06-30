@@ -11,37 +11,67 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+import shlex
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+def load_env_file(path):
+    env_path = Path(path)
+    if not env_path.exists():
+        return
 
-# SECURITY WARNING: set DJANGO_SECRET_KEY in production.
+    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+
+        key, value = line.split("=", 1)
+        key = key.strip()
+        if not key or key in os.environ:
+            continue
+
+        try:
+            parsed = shlex.split(value, comments=True, posix=True)
+        except ValueError:
+            parsed = [value.strip()]
+
+        os.environ[key] = parsed[0] if parsed else ""
+
+
+load_env_file(os.environ.get("BLOGGIFY_ENV_FILE", "/etc/bloggify/bloggify.env"))
+
+
+def env_bool(name, default=False):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def env_list(name, default=""):
+    return [
+        item.strip()
+        for item in os.environ.get(name, default).split(",")
+        if item.strip()
+    ]
+
+
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
     "local-development-secret-key-change-me-not-for-production",
 )
 
-# SECURITY WARNING: set DJANGO_DEBUG=False in production.
-DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() in {"1", "true", "yes", "on"}
+DEBUG = env_bool("DJANGO_DEBUG", True)
 
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
-    if host.strip()
-]
+ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS")
+CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 
 LOGIN_REDIRECT_URL = "/blogs/"
 LOGIN_URL = "bloggify:login"
 
-# Application definition
-
 INSTALLED_APPS = [
-    "debug_toolbar",
     "bloggify.apps.BloggifyConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -51,12 +81,16 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
+ENABLE_DEBUG_TOOLBAR = DEBUG and env_bool("DJANGO_ENABLE_DEBUG_TOOLBAR", True)
+
+if ENABLE_DEBUG_TOOLBAR:
+    INSTALLED_APPS.insert(0, "debug_toolbar")
+
 INTERNAL_IPS = [
-    '127.0.0.1',
+    "127.0.0.1",
 ]
 
 MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -65,6 +99,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+if ENABLE_DEBUG_TOOLBAR:
+    MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
 
 ROOT_URLCONF = "bloggify_project.urls"
 
@@ -85,9 +122,31 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "bloggify_project.wsgi.application"
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+EMAIL_BACKEND = os.environ.get(
+    "DJANGO_EMAIL_BACKEND",
+    (
+        "bloggify.email_backends.AppsScriptEmailBackend"
+        if os.environ.get("BLOGGIFY_MAIL_GATEWAY_URL")
+        else "django.core.mail.backends.console.EmailBackend"
+    ),
+)
+EMAIL_TIMEOUT = int(os.environ.get("DJANGO_EMAIL_TIMEOUT", "15"))
+EMAIL_HOST = os.environ.get("DJANGO_EMAIL_HOST", "")
+EMAIL_PORT = int(os.environ.get("DJANGO_EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.environ.get("DJANGO_EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("DJANGO_EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = env_bool("DJANGO_EMAIL_USE_TLS", True)
+EMAIL_USE_SSL = env_bool("DJANGO_EMAIL_USE_SSL", False)
+DEFAULT_FROM_EMAIL = os.environ.get(
+    "DJANGO_DEFAULT_FROM_EMAIL",
+    os.environ.get("DEFAULT_FROM_EMAIL", "Bloggify <no-reply@localhost>"),
+)
+SERVER_EMAIL = os.environ.get(
+    "DJANGO_SERVER_EMAIL",
+    os.environ.get("SERVER_EMAIL", DEFAULT_FROM_EMAIL),
+)
+BLOGGIFY_MAIL_GATEWAY_URL = os.environ.get("BLOGGIFY_MAIL_GATEWAY_URL", "")
+BLOGGIFY_MAIL_GATEWAY_TOKEN = os.environ.get("BLOGGIFY_MAIL_GATEWAY_TOKEN", "")
 
 DATABASES = {
     "default": {
@@ -98,12 +157,9 @@ DATABASES = {
                 "POSTGRES_PASSFILE", str(BASE_DIR / ".my_pgpass")
             ),
         },
+        "CONN_MAX_AGE": int(os.environ.get("POSTGRES_CONN_MAX_AGE", "60")),
     }
 }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -120,21 +176,30 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "Asia/Tehran"
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
-
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+USE_HTTPS = env_bool("DJANGO_USE_HTTPS", False)
+
+SECURE_SSL_REDIRECT = USE_HTTPS
+SESSION_COOKIE_SECURE = USE_HTTPS
+CSRF_COOKIE_SECURE = USE_HTTPS
+SECURE_HSTS_SECONDS = int(os.environ.get("DJANGO_SECURE_HSTS_SECONDS", "0"))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool(
+    "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", False
+)
+SECURE_HSTS_PRELOAD = env_bool("DJANGO_SECURE_HSTS_PRELOAD", False)
+
+USE_HTTPS = env_bool("DJANGO_USE_HTTPS", False)
+
+SECURE_SSL_REDIRECT = USE_HTTPS
+SESSION_COOKIE_SECURE = USE_HTTPS
+CSRF_COOKIE_SECURE = USE_HTTPS

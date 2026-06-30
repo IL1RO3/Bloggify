@@ -1,84 +1,41 @@
 # Bloggify
 
-Bloggify is a self-hostable Django blog and note-taking website. It gives you a simple place to publish public posts, keep draft notes, organize writing by category, and manage content from a personal dashboard.
+Bloggify is a Django blogging and note-taking app. There can be a public hosted Bloggify instance, and the same codebase can also be self-hosted by anyone who wants to run their own copy.
 
-The project is currently in active development and will be deployed soon. Until the hosted version is available, you can run it locally or self-host it on your own server.
+The repository is intentionally generic: it must not contain the production server's secrets, database passwords, Apps Script tokens, or Apache files copied directly from a live VPS.
 
-## Features
+## What It Does
 
 - Public homepage for published posts
-- Post detail pages with slug-based URLs
+- Detail pages with date and slug URLs
 - User registration, login, logout, and dashboard pages
 - Draft workflow for private notes and unpublished writing
 - Staff/admin publishing workflow for public posts
 - Create, edit, and delete posts from the dashboard
-- Categories for organizing blog posts and notes
-- Comment form on posts
-- Admin moderation for comments
-- Django admin actions for publishing posts and activating comments
+- Categories for organizing posts and notes
+- Comment form with admin moderation
+- Password reset support through Django email backends
 - PostgreSQL configuration through service and password files
 
-## Use Cases
+## Hosted And Self-Hosted
 
-Bloggify can be used as:
+Bloggify supports two deployment styles:
 
-- A personal self-hosted blog
-- A private or public note-taking website
-- A writing dashboard for drafts, ideas, and published articles
-- A small team knowledge base or journal
-- A Django learning project for authentication, CRUD views, admin customization, and PostgreSQL setup
+| Mode | Meaning |
+| --- | --- |
+| Public hosted version | The main Bloggify site operated by the project maintainer. |
+| Self-hosted version | A separate copy someone runs on their own VPS, domain, database, and email setup. |
+
+Both use the same Django app. The difference is configuration: domains, secrets, database credentials, email gateway tokens, Apache paths, and backups belong to each server.
 
 ## Tech Stack
 
-- Python
+- Python 3.12+
 - Django 6
 - PostgreSQL
 - psycopg2
-- HTML templates
-- CSS
-
-## Project Structure
-
-```text
-.
-|-- README.md
-|-- requirements.txt
-|-- manage.py
-|-- .pgpass.example
-|-- bloggify/
-|   |-- admin.py
-|   |-- forms.py
-|   |-- models.py
-|   |-- urls.py
-|   |-- views.py
-|   |-- migrations/
-|   |-- static/
-|   `-- templates/
-`-- bloggify_project/
-    |-- settings.py
-    |-- urls.py
-    |-- asgi.py
-    `-- wsgi.py
-```
-
-## Security Notes
-
-No real database password should be committed to this repository.
-
-- Put your local PostgreSQL password in `.my_pgpass`
-- Keep production secrets in environment variables
-- Do not commit `.my_pgpass`, `.pgpass`, `.pg_service.conf`, `.env`, or `.env.*`
-- Keep `.pgpass.example` as placeholders only
-- Set a real `DJANGO_SECRET_KEY` before production deployment
-
-The `.gitignore` file is configured to ignore local credential files.
-
-## Requirements
-
-- Python 3.12 or newer
-- PostgreSQL
-- pip
-- virtualenv, optional but recommended
+- Apache + mod_wsgi for the documented VPS deployment
+- HTML templates and CSS
 
 ## Local Setup
 
@@ -108,7 +65,7 @@ Create a PostgreSQL database:
 createdb bloggify
 ```
 
-Create or update your PostgreSQL service file. This file usually lives outside the project at `~/.pg_service.conf`:
+Create a PostgreSQL service file. Locally this usually lives at `~/.pg_service.conf`:
 
 ```ini
 [my_service]
@@ -136,153 +93,85 @@ Lock down the password file:
 chmod 600 .my_pgpass
 ```
 
-Run migrations:
+Run migrations and start the app:
 
 ```bash
 python manage.py migrate
-```
-
-Create an admin user:
-
-```bash
 python manage.py createsuperuser
-```
-
-Start the development server:
-
-```bash
 python manage.py runserver
 ```
 
-Open the app:
+Open:
 
 ```text
 http://127.0.0.1:8000/blogs/
-```
-
-Open the admin panel:
-
-```text
 http://127.0.0.1:8000/admin/
 ```
 
 ## Configuration
 
-The project works locally with the default development settings, but these environment variables are available for deployment:
+Runtime configuration is controlled by environment variables.
 
-| Variable | Purpose | Default |
+| Variable | Purpose | Local default |
 | --- | --- | --- |
-| `DJANGO_SECRET_KEY` | Django secret key for production | Local development placeholder |
-| `DJANGO_DEBUG` | Enables or disables debug mode | `True` |
-| `DJANGO_ALLOWED_HOSTS` | Comma-separated list of allowed domains | Empty list |
+| `BLOGGIFY_ENV_FILE` | Optional path to an env file loaded by settings | `/etc/bloggify/bloggify.env` if it exists |
+| `DJANGO_SECRET_KEY` | Secret key for signing data | Development placeholder |
+| `DJANGO_DEBUG` | Enables debug mode | `True` |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated hostnames | Empty |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | Comma-separated HTTPS origins | Empty |
+| `DJANGO_USE_HTTPS` | Enables HTTPS redirects and secure cookies | `False` |
 | `POSTGRES_SERVICE` | PostgreSQL service name | `my_service` |
 | `POSTGRES_PASSFILE` | PostgreSQL password file path | `.my_pgpass` |
+| `PGSERVICEFILE` | PostgreSQL service file path | libpq default |
+| `DJANGO_EMAIL_BACKEND` | Django email backend path | Console, or Apps Script if gateway URL is set |
+| `DEFAULT_FROM_EMAIL` | Default sender address | `Bloggify <no-reply@localhost>` |
+| `SERVER_EMAIL` | Server/error sender address | `DEFAULT_FROM_EMAIL` |
+| `BLOGGIFY_MAIL_GATEWAY_URL` | Optional Google Apps Script mail gateway URL | Empty |
+| `BLOGGIFY_MAIL_GATEWAY_TOKEN` | Shared token for the mail gateway | Empty |
 
-## Email And Password Reset
+Use `deploy/env/bloggify.env.example` as the production template. The real `/etc/bloggify/bloggify.env` must stay private. Django loads this file automatically when it exists, which keeps Apache/mod_wsgi deployments simple.
 
-Bloggify currently uses Django's console email backend for local development:
+## Password Reset Email
 
-```python
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+Local development uses Django's console email backend unless configured otherwise. Password reset emails appear in the terminal running `python manage.py runserver`.
+
+For production, use one of these:
+
+- A normal SMTP provider with `DJANGO_EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend`
+- The included Apps Script gateway backend with `BLOGGIFY_MAIL_GATEWAY_URL` and `BLOGGIFY_MAIL_GATEWAY_TOKEN`
+
+Do not commit real email tokens or app passwords.
+
+## Deployment
+
+The current deployment guide is Apache + mod_wsgi + PostgreSQL on one Ubuntu VPS, with optional Google Apps Script email for password resets. See `DEPLOYMENT.md`.
+
+Commit-safe deployment assets live in `deploy/`:
+
+```text
+deploy/
+|-- apache/bloggify.conf
+|-- env/bloggify.env.example
+|-- scripts/bloggify-db-backup
+`-- migration-checklist.md
 ```
 
-This means password reset emails are printed in the terminal where `python manage.py runserver` is running. For local testing, submit the password reset form, copy the full reset link from the terminal output, and open it in your browser.
-
-Before using password reset with real users, change the email settings in `bloggify_project/settings.py` to a real email backend, such as SMTP or your production email provider. Do not use the console backend in production because it does not send real emails.
-
-Generate a production secret key:
-
-```bash
-python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
-```
-
-Example production environment:
-
-```bash
-export DJANGO_SECRET_KEY="replace-this-with-a-generated-secret"
-export DJANGO_DEBUG=False
-export DJANGO_ALLOWED_HOSTS="example.com,www.example.com"
-export POSTGRES_SERVICE="my_service"
-export POSTGRES_PASSFILE="/path/to/.my_pgpass"
-```
-
-## How Publishing Works
-
-Regular users can create posts from the dashboard. These posts start as drafts, which makes Bloggify useful as a note-taking space or writing workspace.
-
-Staff users can publish posts immediately. Admin users can also publish posts later from the Django admin using the custom bulk action.
-
-Comments are created as inactive by default and can be approved from the Django admin before appearing publicly.
+These files are templates. Replace example domains, paths, and usernames for each server.
 
 ## Useful Commands
 
-Run the development server:
-
 ```bash
-python manage.py runserver
-```
-
-Create migrations after model changes:
-
-```bash
+python manage.py test
 python manage.py makemigrations
-```
-
-Apply migrations:
-
-```bash
 python manage.py migrate
-```
-
-Create a superuser:
-
-```bash
-python manage.py createsuperuser
-```
-
-Run tests:
-
-```bash
-python manage.py test
-```
-
-Collect static files for deployment:
-
-```bash
 python manage.py collectstatic
+python manage.py check --deploy
 ```
 
-## Self-Hosting Notes
+## Security Notes
 
-Before using Bloggify in production:
-
-- Set `DJANGO_SECRET_KEY`
-- Set `DJANGO_DEBUG=False`
-- Add your domain to `DJANGO_ALLOWED_HOSTS`
-- Configure HTTPS
-- Configure a real email backend for password reset emails
-- Serve static files through your web server or storage provider
-- Use a production WSGI or ASGI server such as Gunicorn, uWSGI, Daphne, or Uvicorn
-- Keep `.my_pgpass`, `.env`, and other secret files out of Git
-- Configure database backups
-
-## Contributing
-
-Contributions are welcome. For larger changes, open an issue first so the implementation can be discussed.
-
-To contribute:
-
-```bash
-git checkout -b feature/your-feature-name
-python manage.py test
-```
-
-Then open a pull request with a short explanation of the change.
-
-## Acknowledgements
-
-The CSS styles in `bloggify/static/bloggify/styles.css` were entirely written by Codex 5.5 Extra High.
-
-## License
-
-This project is licensed under the BSD 3-Clause License. See `LICENSE` for details.
+- Never commit `DJANGO_SECRET_KEY`, database passwords, Apps Script tokens, Gmail app passwords, `.pgpass`, `.pg_service.conf`, or `.env` files.
+- Set `DJANGO_DEBUG=False` in production.
+- Set `DJANGO_ALLOWED_HOSTS` to the exact domain names.
+- Use HTTPS before real users rely on login or password reset.
+- Back up PostgreSQL regularly and test that backups can be restored.

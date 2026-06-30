@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+umask 077
+
+BACKUP_DIR="/var/backups/bloggify/postgresql"
+DATABASE="bloggify"
+KEEP_DAYS=14
+
+timestamp="$(date -u +%Y-%m-%dT%H%M%SZ)"
+final_file="${BACKUP_DIR}/bloggify-auto-${timestamp}.dump"
+temp_file="${BACKUP_DIR}/.bloggify-auto-${timestamp}.$$.tmp"
+
+cleanup() {
+  rm -f "$temp_file"
+}
+trap cleanup EXIT
+
+pg_dump \
+  --format=custom \
+  --no-owner \
+  --no-privileges \
+  --file="$temp_file" \
+  "$DATABASE"
+
+pg_restore --list "$temp_file" > /dev/null
+
+mv "$temp_file" "$final_file"
+trap - EXIT
+
+find "$BACKUP_DIR" \
+  -maxdepth 1 \
+  -type f \
+  -name 'bloggify-auto-*.dump' \
+  -mtime +"$KEEP_DAYS" \
+  -delete
+
+printf 'Backup created: %s\n' "$final_file"

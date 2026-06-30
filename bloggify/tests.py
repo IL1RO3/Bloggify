@@ -1,6 +1,10 @@
 # pyright: reportAttributeAccessIssue=false
 # above comment is a setting used by Pylance, remove if you are not using it.
 
+import json
+from unittest import mock
+from urllib.parse import urlsplit
+
 from django.test import TestCase
 from .models import Post, Category, Comment
 from django.utils import timezone
@@ -8,7 +12,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from .helpers import create_post
 from django.core import mail
-from urllib.parse import urlsplit
+from django.core.mail import EmailMessage
 
 # tests for models
 
@@ -520,3 +524,35 @@ class PasswordResetFlowTest(TestCase):
 
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password(new_password))
+
+
+class AppsScriptEmailBackendTest(TestCase):
+    @mock.patch("bloggify.email_backends.request.urlopen")
+    def test_apps_script_backend_posts_email_payload(self, mocked_urlopen):
+        mocked_response = mocked_urlopen.return_value.__enter__.return_value
+        mocked_response.read.return_value = b'{"ok": true}'
+
+        with self.settings(
+            EMAIL_BACKEND="bloggify.email_backends.AppsScriptEmailBackend",
+            BLOGGIFY_MAIL_GATEWAY_URL=(
+                "https://script.google.com/macros/s/example/exec"
+            ),
+            BLOGGIFY_MAIL_GATEWAY_TOKEN="test-token",
+        ):
+            sent = EmailMessage(
+                subject="Reset your password",
+                body="Use this reset link.",
+                from_email="Bloggify <noreply@example.com>",
+                to=["reader@example.com"],
+            ).send()
+
+        self.assertEqual(sent, 1)
+
+        gateway_request = mocked_urlopen.call_args.args[0]
+        payload = json.loads(gateway_request.data.decode("utf-8"))
+
+        self.assertEqual(payload["token"], "test-token")
+        self.assertEqual(payload["subject"], "Reset your password")
+        self.assertEqual(payload["to"], "reader@example.com")
+        self.assertEqual(payload["text"], "Use this reset link.")
+        self.assertEqual(payload["html"], "")
