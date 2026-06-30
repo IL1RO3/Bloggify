@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 
 class Category(models.Model):
     title = models.CharField(unique=True, max_length=250)
+    def __str__(self):
+       return self.title 
 
 
 class Post(models.Model):
