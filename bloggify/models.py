@@ -31,7 +31,7 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
+            self.slug = slugify(self.title)[:50]
         if self.author and self.author.is_staff:
             self._status = "published"
         super().save(*args, **kwargs)

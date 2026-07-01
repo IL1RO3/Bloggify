@@ -1,15 +1,14 @@
 from django import forms
 from .models import Post, Comment, User
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.forms import PasswordResetForm , UserCreationForm
 
 
 class AddPostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ["title", "body", "category"]
-
-
+        
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
@@ -23,3 +22,5 @@ class ModifiedPasswordResetFrom(PasswordResetForm):
         if not User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError('No account exists with this email address.')
         return email
+
+ 

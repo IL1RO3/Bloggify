@@ -18,6 +18,7 @@ class PostAdmin(admin.ModelAdmin):
     @admin.action(description="Update posts to published.")
     def make_publish(self, request, queryset):
         queryset.update(_status="published")
+        
 
 
 class CommentAdmin(admin.ModelAdmin):
