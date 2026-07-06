@@ -23,6 +23,14 @@
                         <div class="error">{{ form.username.errors }}</div>
                     {% endif %}
                 </div>
+                
+                <div class="form-group">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="error">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
 
                 <div class="form-group">
                     {{ form.password1.label_tag }}
@@ -31,7 +39,7 @@
                         <div class="error">{{ form.password1.errors }}</div>
                     {% endif %}
                 </div>
-
+            
                 <div class="form-group">
                     {{ form.password2.label_tag }}
                     {{ form.password2 }}

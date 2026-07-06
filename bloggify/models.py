@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.urls import reverse
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 
@@ -35,6 +36,19 @@ class Post(models.Model):
         if self.author and self.author.is_staff:
             self._status = "published"
         super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        local_date = timezone.localtime(self.pub_date)
+
+        return reverse(
+            "bloggify:post_detail",
+            kwargs={
+                "year": local_date.year,
+                "month": local_date.month,
+                "day": local_date.day,
+                "slug": self.slug,
+            },
+        )
 
     @property
     def status(self):

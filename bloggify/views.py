@@ -6,8 +6,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from .models import *
 from django.contrib.auth import logout
-from django.contrib.auth.forms import UserCreationForm
-from .forms import AddPostForm, CommentForm
+from .forms import AddPostForm, CommentForm , SignupForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
@@ -124,12 +123,12 @@ def about_view(request):
 
 def signup_view(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = SignupForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect("bloggify:login")
     else:
-        form = UserCreationForm()
+        form = SignupForm()
     return render(request, "registration/signup.html", {"form": form})
 
 

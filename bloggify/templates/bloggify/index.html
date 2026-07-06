@@ -87,7 +87,7 @@
                     <p class="date">Published on {{ post.pub_date }}</p>
                     <p class="preview">{{ post.body|truncatechars:120 }}</p>
 
-                    <a href="{% url 'bloggify:post_detail' post.pub_date.year post.pub_date.month post.pub_date.day post.slug %}" class="read-more">
+                    <a href="{{ post.get_absolute_url }}" class="read-more">
                         Read More →
                     </a>
                 </div>

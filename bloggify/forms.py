@@ -23,4 +23,17 @@ class ModifiedPasswordResetFrom(PasswordResetForm):
             raise forms.ValidationError('No account exists with this email address.')
         return email
 
- 
+class SignupForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    class meta:
+        model = User
+        fields = ('username' , 'email' , 'password0','password2')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data["email"]
+
+        if commit:
+            user.save()
+
+        return user

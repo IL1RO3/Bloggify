@@ -4,8 +4,9 @@
 import json
 from unittest import mock
 from urllib.parse import urlsplit
-
-from django.test import TestCase
+from datetime import datetime, timezone as datetime_timezone
+from zoneinfo import ZoneInfo
+from django.test import TestCase , override_settings
 from .models import Post, Category, Comment
 from django.utils import timezone
 from django.contrib.auth import get_user_model
@@ -556,3 +557,63 @@ class AppsScriptEmailBackendTest(TestCase):
         self.assertEqual(payload["to"], "reader@example.com")
         self.assertEqual(payload["text"], "Use this reset link.")
         self.assertEqual(payload["html"], "")
+
+# timezone test
+
+@override_settings(USE_TZ=True, TIME_ZONE="Asia/Tehran")
+class PostTimezoneUrlTests(TestCase):
+    def test_post_url_uses_tehran_calendar_date_and_opens(self):
+        user = get_user_model().objects.create_user(
+            username="timezone_test_user",
+            password="test-password-123",
+        )
+
+        category = Category.objects.create(
+            title="Test Category",
+        )
+
+        # 20:45 UTC on July 6 = 00:15 Tehran on July 7.
+        published_at = datetime(
+            2026,
+            7,
+            6,
+            20,
+            45,
+            tzinfo=datetime_timezone.utc,
+        )
+
+        post = Post.objects.create(
+            title="Timezone URL Test",
+            body="This post verifies timezone-safe post URLs.",
+            slug="timezone-url-test",
+            author=user,
+            category=category,
+            status="published",
+            pub_date=published_at,
+        )
+
+        expected_local_date = published_at.astimezone(
+            ZoneInfo("Asia/Tehran")
+        ).date()
+
+        expected_url = reverse(
+            "bloggify:post_detail",
+            args=[
+                expected_local_date.year,
+                expected_local_date.month,
+                expected_local_date.day,
+                post.slug,
+            ],
+        )
+
+        with timezone.override("Asia/Tehran"):
+            # Confirms get_absolute_url uses the Tehran calendar date,
+            # not the UTC date stored in the database.
+            self.assertEqual(
+                post.get_absolute_url(),
+                expected_url,
+            )
+
+            response = self.client.get(post.get_absolute_url())
+
+        self.assertEqual(response.status_code, 200)
