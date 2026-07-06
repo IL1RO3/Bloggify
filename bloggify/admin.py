@@ -18,7 +18,7 @@ class PostAdmin(admin.ModelAdmin):
     @admin.action(description="Publish Posts")
     def make_publish(self, request, queryset):
         queryset.update(_status="published")
-        post_date = timezone.localtime()
+        post_date = timezone.now()
         queryset.update(pub_date=post_date)
         
     def draft_post(self , request , queryset):
