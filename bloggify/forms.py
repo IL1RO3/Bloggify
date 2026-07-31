@@ -25,14 +25,20 @@ class ModifiedPasswordResetFrom(PasswordResetForm):
 
 class SignupForm(UserCreationForm):
     email = forms.EmailField(required=True)
-    class meta:
+    class Meta:
         model = User
-        fields = ('username' , 'email' , 'password0','password2')
-
+        fields = ('username' , 'email' , 'password1','password2')
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        User = get_user_model()
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError('This email is already used by another user!')
+        return email
+    
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data["email"]
-
         if commit:
             user.save()
 
