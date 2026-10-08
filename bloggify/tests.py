@@ -194,6 +194,28 @@ class DetailViewTest(TestCase):
         self.assertContains(response, "No comments yet. Be the first to comment!")
         self.assertNotContains(response, comment.body)
 
+    def test_invalid_comment_renders_bound_form_errors(self):
+        post = create_post(
+            title="Comment Validation Guide",
+            body="Invalid comments should be returned with field errors.",
+            username="comment_validation_editor",
+            password="ValidationPass123!",
+            category="Comment Validation",
+            is_staff=True,
+        )
+        post_date = timezone.localtime(post.pub_date)
+        url = reverse(
+            "bloggify:post_detail",
+            args=[post_date.year, post_date.month, post_date.day, post.slug],
+        )
+
+        response = self.client.post(
+            url, data={"name": "", "email": "invalid", "body": ""}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context["comment_form"].errors)
+
 
 class UpdateViewTest(TestCase):
 

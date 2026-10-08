@@ -64,7 +64,7 @@ class PostDetailView(generic.DateDetailView):
             return redirect(request.path)
 
         context = self.get_context_data(object=post)
-        context["comment_form"] = post
+        context["comment_form"] = form
         return self.render_to_response(context)
 
 
